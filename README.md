@@ -13,5 +13,5 @@ Have a wallet already(or generated one yet)? you'r on the target line, just run
 <code>./walletd -w walletname --rpc-password thestrongestpasswordeversonoonecancrackit --daemon-address public.turtlenode.io</code> on Linux/Mac
 and <code>walletd.exe -w walletname --rpc-password thestrongestpasswordeversonoonecancrackit --daemon-address public.turtlenode.io</code> on Windows.
 # Be Happy
-Now you are finished, you can visit you webserver under localhost and have fun with turtlecoin!
+Now you are finished, you can visit you webserver under localhost and have fun with turtlecoin! Errors occuring with mb_internal_encoding() can be fixed for Windows <a href="http://www.php.net/manual/en/mbstring.installation.php">here</a>. Linux just type <code>apt-get install php7.2-mbstring</code>. If you still get one error: fix on Windows <a href="http://php.net/manual/en/image.installation.php">here</a>. Linux just type <code>apt-get install php-gd</code>.
 If you have too much money: TRTLuxns7wcNqnoBMjYrMEhRTQdq8AKcwi1G58uqfgdiMqhDZS1fyaAenTwKiPgryn5TQNukGkQScdVqExcLj9XE5EZWvw8Y9R5
