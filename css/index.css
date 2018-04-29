@@ -1,0 +1,15 @@
+body {
+  background-color: #5dcc63;
+}
+#fimgs {
+  margin-left: 2.5%;
+}
+#main-container {
+  margin-left: 35%;
+}
+#stats {
+  text-align: center;
+}
+div, caption {
+  font-family: 'Oswald', sans-serif;
+}

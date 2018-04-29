@@ -18,12 +18,20 @@ elseif ($_SERVER["REQUEST_METHOD"] == "POST") {
   <head>
     <meta charset="utf-8">
     <title>Login</title>
+    <style media="screen">
+      body {
+        background-color: #5dcc63;
+      }
+      #loginform {
+        text-align: center;
+      }
+    </style>
   </head>
   <body>
-    <form action="login.php" method="post">
+    <form id="loginform" action="login.php" method="post">
       <input type="url" name="ip" value="http://127.0.0.1"><!-- Standart values -->
       <input type="number" name="port" value="8070"><!-- Standart values -->
-      <input type="password" name="password" placeholder="Password">
+      <input type="password" name="password" placeholder="Password"></p>
       <input type="submit" value="Login">
     </form>
   </body>

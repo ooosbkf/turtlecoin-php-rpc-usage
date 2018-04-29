@@ -17,21 +17,35 @@ $config = [
     'rpcPort'     => intval($_SESSION["portconf"]),
     'rpcPassword' => $_SESSION["passconf"],
 ];
+
 $walletd = new Walletd\Client($config);
+
+#JSON response
+$bal = $walletd->getBalance()->getBody()->getContents();
+
+#Decode
+$decbal = json_decode($bal, true);
+
+#Balances
+$balance = intval($decbal["result"]["availableBalance"]) / 100;
 ?>
 <!DOCTYPE html>
 <html>
   <head>
     <meta charset="utf-8">
     <title>Transaction</title>
+    <link href="https://fonts.googleapis.com/css?family=Oswald" rel="stylesheet">
+    <link rel="stylesheet" href="css/transact.css">
+    <script src="js/transact.js"></script>
   </head>
   <body>
-    <a href="index.php">Back</a>
+    <a href="index.php"><img height="4%" width="4%" src="img/back.png" alt="Back"></a></p>
+    <div id="bal">Your available balance is: <?php echo $balance . " TRTL"; ?></div>
     <form id="form" action="transact.php" method="post">
       <!-- Payment options -->
-      <input type="text" name="rec" placeholder="Receiver" required><br>
+      <input type="text" name="rec" placeholder="Receiver" size="55%" required><br>
       <input type="text" name="amount" placeholder="Amount" required><br>
-      <input type="text" name="fee" placeholder="Fee (min 1)" required><br>
+      <input type="text" name="fee" placeholder="Fee (min 0.1)" required><br>
       <input type="number" min="0" name="anon" placeholder="Anonymity (1 to ∞)" required><br>
       <input type="text" name="extra" placeholder="Extra (optional)"><br>
       <input type="text" name="pid" placeholder="Payment ID (optional)"><br>
@@ -55,11 +69,15 @@ $walletd = new Walletd\Client($config);
       $strans = $walletd->sendDelayedTransaction($_GET["send"])->getBody()->getContents();
       $decstrans = json_decode($strans, true);
       echo "Transaction sent to blockchain: <a target='_blank' href='https://turtle-coin.com/?hash=" . $_GET["send"] . "#blockchain_transaction'>Watch status</a>";
+      $transc = count($_SESSION["thistory"]);
+      $_SESSION["thistory"][$transc] = $_GET["send"];
+      echo '<script>notify("Your transaction was sent to blockchain", "Transaction completed");</script>';
     }
     elseif (isset($_GET["cancel"])) {
       #Transact cancelled response
       $strans = $walletd->deleteDelayedTransaction($_GET["cancel"])->getBody()->getContents();
       $decstrans = json_decode($strans, true);
+      echo '<script>cnotify();</script>';
       if (!isset($decstrans["error"])) {
         echo "Transaction cancelled";
       }
@@ -68,9 +86,11 @@ $walletd = new Walletd\Client($config);
     if ($_SERVER["REQUEST_METHOD"] == "POST") {
       #Get variables and set them
       $anonymity = intval($_POST["anon"]);
-      $fee = intval($_POST["fee"]) * 100;
       $rec = $_POST["rec"];
-      $amount = intval($_POST["amount"]) * 100;
+      $rawfee = (float) $_POST["fee"];
+      $rawamount = (float) $_POST["amount"];
+      $fee = intval($rawfee * 100);
+      $amount = intval($rawamount * 100);
       $transfers = [
          [
             "address" => $rec,
@@ -110,9 +130,10 @@ $walletd = new Walletd\Client($config);
           }
         }
         #Confirm transaction
-        $yeslink = 'javascript:window.location = "transact.php?send=' . $dectrans["result"]["transactionHash"] . '"';
-        $nolink = 'javascript:window.location = "transact.php?cancel=' . $dectrans["result"]["transactionHash"] . '"';
-        echo "Are you sure you want to send " . $amount / 100 . "trtl to " . $rec . " with a fee of " . $fee / 100 . "trtl and an anonymity level of " . $anonymity . "<br><button onclick='" . $yeslink . "'>Yes</button><button onclick='" . $nolink . "'>No</button>";
+        $yeslink = 'javascript:window.location = "transact.php?send=' . $dectrans["result"]["transactionHash"] . '"; notify("Transaction completed", "Your transaction was sent to blockchain");';
+        $nolink = 'javascript:window.location = "transact.php?cancel=' . $dectrans["result"]["transactionHash"] . '"; cnotify();';
+        $later = 'javascript:notify("Confirm you transaction here", "Transaction delayed");';
+        echo "Are you sure you want to send " . $amount / 100 . " TRTL to " . $rec . " with a fee of " . $fee / 100 . " TRTL and an anonymity level of " . $anonymity . "<br><button onclick='" . $yeslink . "'>Yes</button><button onclick='" . $nolink . "'>No</button><button onclick='" . $later . "'>Confirm later</button>";
         }
         #Do the same with paymentid and no extra
       elseif (strlen($extra) != 0 && strlen($pid) == 0) {
@@ -134,9 +155,10 @@ $walletd = new Walletd\Client($config);
             die("<script>alert('" . $dectrans["error"]["message"] . "');</script>");
           }
         }
-        $yeslink = 'javascript:window.location = "transact.php?send=' . $dectrans["result"]["transactionHash"] . '"';
-        $nolink = 'javascript:window.location = "transact.php?cancel=' . $dectrans["result"]["transactionHash"] . '"';
-        echo "Are you sure you want to send " . $amount / 100 . "trtl to " . $rec . " with a fee of " . $fee / 100 . "trtl and an anonymity level of " . $anonymity . "<br><button onclick='" . $yeslink . "'>Yes</button><button onclick='" . $nolink . "'>No</button>";
+        $yeslink = 'javascript:window.location = "transact.php?send=' . $dectrans["result"]["transactionHash"] . '"; notify("Transaction completed", "Your transaction was sent to blockchain");';
+        $nolink = 'javascript:window.location = "transact.php?cancel=' . $dectrans["result"]["transactionHash"] . '"; cnotify();';
+        $later = 'javascript:notify("Confirm you transaction here", "Transaction delayed");';
+        echo "Are you sure you want to send " . $amount / 100 . " TRTL to " . $rec . " with a fee of " . $fee / 100 . " TRTL and an anonymity level of " . $anonymity . "<br><button onclick='" . $yeslink . "'>Yes</button><button onclick='" . $nolink . "'>No</button><button onclick='" . $later . "'>Confirm later</button>";
       }
       #Do the same with extra and no paymentid
       elseif (strlen($extra) == 0 && strlen($pid) != 0) {
@@ -158,9 +180,10 @@ $walletd = new Walletd\Client($config);
             die("<script>alert('" . $dectrans["error"]["message"] . "');</script>");
           }
         }
-        $yeslink = 'javascript:window.location = "transact.php?send=' . $dectrans["result"]["transactionHash"] . '"';
-        $nolink = 'javascript:window.location = "transact.php?cancel=' . $dectrans["result"]["transactionHash"] . '"';
-        echo "Are you sure you want to send " . $amount / 100 . "trtl to " . $rec . " with a fee of " . $fee / 100 . "trtl and an anonymity level of " . $anonymity . "<br><button onclick='" . $yeslink . "'>Yes</button><button onclick='" . $nolink . "'>No</button>";
+        $yeslink = 'javascript:window.location = "transact.php?send=' . $dectrans["result"]["transactionHash"] . '"; notify("Transaction completed", "Your transaction was sent to blockchain");';
+        $nolink = 'javascript:window.location = "transact.php?cancel=' . $dectrans["result"]["transactionHash"] . '"; cnotify();';
+        $later = 'javascript:notify("Confirm you transaction here", "Transaction delayed");';
+        echo "Are you sure you want to send " . $amount / 100 . " TRTL to " . $rec . " with a fee of " . $fee / 100 . " TRTL and an anonymity level of " . $anonymity . "<br><button onclick='" . $yeslink . "'>Yes</button><button onclick='" . $nolink . "'>No</button><button onclick='" . $later . "'>Confirm later</button>";
       }
       #Do the same without paymentid and extra
       else {
@@ -182,9 +205,10 @@ $walletd = new Walletd\Client($config);
             die("<script>alert('" . $dectrans["error"]["message"] . "');</script>");
           }
         }
-        $yeslink = 'javascript:window.location = "transact.php?send=' . $dectrans["result"]["transactionHash"] . '"';
-        $nolink = 'javascript:window.location = "transact.php?cancel=' . $dectrans["result"]["transactionHash"] . '"';
-        echo "Are you sure you want to send " . $amount / 100 . "trtl to " . $rec . " with a fee of " . $fee / 100 . "trtl and an anonymity level of " . $anonymity . "<br><button onclick='" . $yeslink . "'>Yes</button><button onclick='" . $nolink . "'>No</button>";
+        $yeslink = 'javascript:window.location = "transact.php?send=' . $dectrans["result"]["transactionHash"] . '";';
+        $nolink = 'javascript:window.location = "transact.php?cancel=' . $dectrans["result"]["transactionHash"] . '";';
+        $later = 'javascript:notify("Confirm you transaction here", "Transaction delayed");';
+        echo "Are you sure you want to send " . $amount / 100 . " TRTL to " . $rec . " with a fee of " . $fee / 100 . " TRTL and an anonymity level of " . $anonymity . "<br><button onclick='" . $yeslink . "'>Yes</button><button onclick='" . $nolink . "'>No</button><button onclick='" . $later . "'>Confirm later</button>";
       }
     }
   }

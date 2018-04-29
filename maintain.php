@@ -22,9 +22,11 @@ $walletd = new Walletd\Client($config);
   <head>
     <meta charset="utf-8">
     <title>Maintain</title>
+    <link href="https://fonts.googleapis.com/css?family=Oswald" rel="stylesheet">
+    <link rel="stylesheet" href="css/address.css">
   </head>
   <body>
-    <a href="index.php">Back</a><br>
+    <a href="index.php"><img height="4%" width="4%" src="img/back.png" alt="Back"></a></p>
     Create address
     <form action="maintain.php" method="post">
       <input type="hidden" name="method" value="gen">
@@ -33,7 +35,7 @@ $walletd = new Walletd\Client($config);
     Delete address !WARNING!: You can only restore your wallet with the public and private spend key on commandline
       <form action="maintain.php" method="post">
       <input type="hidden" name="method" value="del">
-      <input type="text" name="addr" placeholder="Address to delete">
+      <input type="text" name="addr" size="85%" placeholder="Address to delete">
       <input type="submit" value="Delete">
     </form>
     <?php

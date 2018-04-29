@@ -37,9 +37,11 @@ $fcount = count($decaddrs["result"]["addresses"]);
   <head>
     <meta charset="utf-8">
     <title>Your Addresses</title>
+    <link href="https://fonts.googleapis.com/css?family=Oswald" rel="stylesheet">
+    <link rel="stylesheet" href="css/address.css">
   </head>
   <body>
-    <a href="index.php">Back</a>
+  <a href="index.php"><img height="4%" width="4%" src="img/back.png" alt="Back"></a></p>
 <?php
 #Check if showkeys is enabled
 if (isset($_GET["showkeys"])) {
@@ -66,19 +68,22 @@ for ($i=0; $i < $fcount; $i++) {
     #Get spendkeys for each address and output them
     $spendkey = $walletd->getSpendKeys($addresses[$i])->getBody()->getContents();
     $decspendkey = json_decode($spendkey, true);
-    echo "<br>Public address: " . $addresses[$i] . "<br>Balance: " . $balance . ", Locked: " . $lbalance . "<br>Public spend key: " . $decspendkey["result"]["spendPublicKey"] . "<br>Private spend key: " . $decspendkey["result"]["spendSecretKey"] . "<br>Private view key: " . $decvkey["result"]["viewSecretKey"];
+    echo "<br>Public address:<br> <input id='copy" . $i . "' type='text' value='" . $addresses[$i] . "' size='85%' readonly>" . "<button id='btn" . $i . "' onclick='copy" . $i . "()'>Copy</button>" . "<br>Balance: " . $balance . ", Locked: " . $lbalance . "<br>Public spend key: " . $decspendkey["result"]["spendPublicKey"] . "<br>Private spend key: " . $decspendkey["result"]["spendSecretKey"] . "<br>Private view key: " . $decvkey["result"]["viewSecretKey"] . "<br>";
+    echo "<script>function copy" . $i . "(){var copyText = document.getElementById('copy" . $i . "'); copyText.select(); document.execCommand('Copy'); document.getElementById('btn" . $i . "').innerHTML = 'Copied!'}</script>";
     #Check if a qr code with all keys should be generated
     if (isset($_GET["sbqr"])) {
       $big = "pubaddr:" . $addresses[$i] . ";pubspend:" . $decspendkey["result"]["spendPublicKey"] . ";privspend:" . $decspendkey["result"]["spendSecretKey"] . ";privview:" . $decvkey["result"]["viewSecretKey"] . ";";
-      echo '<img src="'.(new QRCode)->render($big).'" />';
+      echo '<img style="background-color: #fff;" src="'.(new QRCode)->render($big).'" />';
     }
     else {
-      echo '<br><img src="'.(new QRCode)->render($addresses[$i]).'" />';
+      echo '<br><img style="background-color: #fff;" src="'.(new QRCode)->render($addresses[$i]).'" />';
     }
   }
   else {
     #Output without keys
-    echo "<br>Public address: " . $addresses[$i] . "<br>Balance: " . $balance . ", Locked: " . $lbalance . "<br>" . '<img src="'.(new QRCode)->render($addresses[$i]).'" />';
+    echo "<br>Public address:<br> <input id='copy" . $i . "' type='text' value='" . $addresses[$i] . "' size='85%' readonly>" . "<button id='btn" . $i . "' onclick='copy" . $i . "()'>Copy</button>";
+    echo "<script>function copy" . $i . "(){var copyText = document.getElementById('copy" . $i . "'); copyText.select(); document.execCommand('Copy'); document.getElementById('btn" . $i . "').innerHTML = 'Copied!'}</script>";
+    echo "<br>Balance: " . $balance . ", Locked: " . $lbalance . "<br>" . '<img style="background-color: #fff;" src="'.(new QRCode)->render($addresses[$i]).'" />';
   }
 }
 ?>

@@ -1,0 +1,9 @@
+body {
+  background-color: #5dcc63;
+  color: #fff;
+  font-family: 'Oswald', sans-serif;
+}
+span {
+  color: red;
+  font-size: 20px;
+}

@@ -1,14 +1,22 @@
 <?php
-#Load libs
-require '../vendor/autoload.php';
-
 #Start session
 session_start();
 
-#Check session
+if (isset($_GET["logout"])) {
+  session_destroy();
+  header('Location: index.php');
+}
+#Load libs
+require '../vendor/autoload.php';
+
+#Check Session
 if (!isset($_SESSION["passconf"]) || !isset($_SESSION["ipconf"]) || !isset($_SESSION["portconf"])) {
   header('Location: login.php');
 }
+if (!isset($_SESSION["thistory"])) {
+  $_SESSION["thistory"] = array(0 => "null");
+}
+
 #Config
 use TurtleCoin\Walletd;
 
@@ -22,7 +30,6 @@ $walletd = new Walletd\Client($config);
 #JSON responses
 $status = $walletd->getStatus()->getBody()->getContents();
 $bal = $walletd->getBalance()->getBody()->getContents();
-
 
 #Decode
 $decstats = json_decode($status, true);
@@ -42,14 +49,35 @@ $bcount = $decstats["result"]["knownBlockCount"];
   <head>
     <meta charset="utf-8">
     <title>Home</title>
+    <link href="https://fonts.googleapis.com/css?family=Oswald" rel="stylesheet">
+    <link rel="stylesheet" href="css/index.css">
   </head>
   <body>
     <!-- Output stats and balance -->
-    Daemon status: <?php echo $sblocks . " of " . $bcount . " blocks synced"; ?><br>
-    Your available balance is: <?php echo $balance; ?> <br>
-    Your locked balance is: <?php echo $lbalance; ?></p>
+    <div id="stats">
+    Your available balance is: <?php echo $balance . " TRTL"; ?> <br>
+    Your locked balance is: <?php echo $lbalance . " TRTL"; ?><br>
+    Daemon status: <?php echo $sblocks . " of " . $bcount . " blocks synced"; ?></p>
+    </div>
     <!-- Links to the sites -->
-    <a href="transact.php"><img src="none" alt="Make a transaction"></a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="address.php"><img src="none" alt="Show addresses"></a><br>
-    <a href="maintain.php"><img src="none" alt="Manage addresses"></a>
+    <div id="main-container">
+    <span id="fimgs"><a href="transact.php"><img src="img/transaction.png" alt="Make a transaction"></a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="address.php"><img src="img/address.png" alt="Show addresses"></a></span><br>
+    &nbsp;&nbsp;&nbsp;<caption>Make a transaction</caption>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<caption>Show addresses</caption></p>
+    <span id="fimgs"><a href="maintain.php"><img src="img/maintain.png" alt="Manage addresses"></a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="history.php"><img src="img/history.png" alt="Session transaction history"></a></span></p>
+    &nbsp;&nbsp;&nbsp;<caption>Manage addresses</caption>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<caption>Session transaction history</caption></p>
+    <br>
+  </div>
+    <a href="index.php?logout=true"><img height="3%" width="3%" src="img/logout.png" alt="Logout"></a><br>
+    <div><caption>Logout</caption></div>
+    <script type="text/javascript">
+    document.addEventListener('DOMContentLoaded', function () {
+  if (!Notification) {
+    alert('Desktop notifications not available in your browser.');
+    return;
+  }
+  if (Notification.permission !== "granted")
+    Notification.requestPermission();
+});
+    </script>
   </body>
 </html>
