@@ -1,9 +1,15 @@
 <?php
+#Load libs
 require '../vendor/autoload.php';
+
+#Start session
 session_start();
+
+#Check session
 if (!isset($_SESSION["passconf"]) || !isset($_SESSION["ipconf"]) || !isset($_SESSION["portconf"])) {
   header('Location: login.php');
 }
+#Config
 use TurtleCoin\Walletd;
 
 $config = [
@@ -15,12 +21,8 @@ $walletd = new Walletd\Client($config);
 
 #JSON responses
 $status = $walletd->getStatus()->getBody()->getContents();
-if (isset($_SESSION["addrconf"])) {
-  $bal = $walletd->getBalance($_SESSION["addrconf"])->getBody()->getContents();
-}
-else {
-  $bal = $walletd->getBalance()->getBody()->getContents();
-}
+$bal = $walletd->getBalance()->getBody()->getContents();
+
 
 #Decode
 $decstats = json_decode($status, true);
@@ -42,9 +44,11 @@ $bcount = $decstats["result"]["knownBlockCount"];
     <title>Home</title>
   </head>
   <body>
+    <!-- Output stats and balance -->
     Daemon status: <?php echo $sblocks . " of " . $bcount . " blocks synced"; ?><br>
     Your available balance is: <?php echo $balance; ?> <br>
     Your locked balance is: <?php echo $lbalance; ?></p>
+    <!-- Links to the sites -->
     <a href="transact.php"><img src="none" alt="Make a transaction"></a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="address.php"><img src="none" alt="Show addresses"></a><br>
     <a href="maintain.php"><img src="none" alt="Manage addresses"></a>
   </body>
