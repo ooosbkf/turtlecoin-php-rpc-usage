@@ -13,9 +13,11 @@ require '../vendor/autoload.php';
 if (!isset($_SESSION["passconf"]) || !isset($_SESSION["ipconf"]) || !isset($_SESSION["portconf"])) {
   header('Location: login.php');
 }
+/*
 if (!isset($_SESSION["thistory"])) {
   $_SESSION["thistory"] = array(0 => "null");
 }
+*/
 
 #Config
 use TurtleCoin\Walletd;
@@ -62,9 +64,9 @@ $bcount = $decstats["result"]["knownBlockCount"];
     <!-- Links to the sites -->
     <div id="main-container">
     <span id="fimgs"><a href="transact.php"><img src="img/transaction.png" alt="Make a transaction"></a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="address.php"><img src="img/address.png" alt="Show addresses"></a></span><br>
-    &nbsp;&nbsp;&nbsp;<caption>Make a transaction</caption>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<caption>Show addresses</caption></p>
-    <span id="fimgs"><a href="maintain.php"><img src="img/maintain.png" alt="Manage addresses"></a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="history.php"><img src="img/history.png" alt="Session transaction history"></a></span></p>
-    &nbsp;&nbsp;&nbsp;<caption>Manage addresses</caption>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<caption>Session transaction history</caption></p>
+    &nbsp;&nbsp;&nbsp;<caption>Make a transaction</caption>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<caption>Show addresses</caption></p>
+    <span id="fimgs"><a href="maintain.php"><img src="img/maintain.png" alt="Manage addresses"></a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="history.php"><img src="img/history.png" alt="Session transaction history"></a></span></p>
+    &nbsp;&nbsp;&nbsp;<caption>Manage addresses</caption>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<caption>Transaction history</caption></p>
     <br>
   </div>
     <a href="index.php?logout=true"><img height="3%" width="3%" src="img/logout.png" alt="Logout"></a><br>

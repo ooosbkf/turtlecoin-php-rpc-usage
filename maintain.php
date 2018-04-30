@@ -50,22 +50,25 @@ $walletd = new Walletd\Client($config);
         #Show address with qr code
         $naddr = $decgen["result"]["address"];
         echo $naddr;
-        echo '<br><img src="'.(new QRCode)->render($naddr).'" />';
+        echo '<br><img style="background-color: #fff" src="'.(new QRCode)->render($naddr).'" />';
       }
       elseif ($_POST["method"] == "del") {
-        #Delete address
-        $resp = $walletd->deleteAddress($_POST["addr"])->getBody()->getContents();
-        #Decode
-        $decresp = json_decode($resp, true);
-        #Check for errors
-        if (isset($decresp["error"])) {
-          echo "<script>alert('The address is invalid, or doesn\'t exists!')</script>";
-        }
-        else {
-          echo "<script>alert('Address deleted!')</script>";
-        }
-      }
+          echo '<script>var confirm = prompt("Please type DELETE to delete ' . substr($_POST["addr"], 0, -35) . '...",""); if (confirm != "DELETE") {alert("Action cancelled");} else {window.location = "maintain.php?c=true&addr=' . $_POST["addr"] . '";}</script>';
     }
+  }
+  elseif (isset($_GET["c"])) {
+    #Delete address
+    $resp = $walletd->deleteAddress($_GET["addr"])->getBody()->getContents();
+    #Decode
+    $decresp = json_decode($resp, true);
+    #Check for errors
+    if (isset($decresp["error"])) {
+      echo "<script>alert('The address is invalid, or doesn\'t exists!')</script>";
+    }
+    else {
+      echo "<script>alert('Address deleted!')</script>";
+    }
+  }
      ?>
   </body>
 </html>

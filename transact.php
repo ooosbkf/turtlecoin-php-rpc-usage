@@ -48,20 +48,20 @@ $balance = intval($decbal["result"]["availableBalance"]) / 100;
       <input type="text" name="fee" placeholder="Fee (min 0.1)" required><br>
       <input type="number" min="0" name="anon" placeholder="Anonymity (1 to ∞)" required><br>
       <input type="text" name="extra" placeholder="Extra (optional)"><br>
-      <input type="text" name="pid" placeholder="Payment ID (optional)"><br>
+      <input type="text" name="pid" size="55%" placeholder="Payment ID (optional)"><br>
       <?php
       #Check if sender address needs to be set
       $addrs = $walletd->getAddresses()->getBody()->getContents();
       $decaddrs = json_decode($addrs, true);
       $fcount = count($decaddrs["result"]["addresses"]);
       if ($fcount > 1) {
-        echo '<input type="text" name="caddr" size="55%" placeholder="Address to send from (because you have two addresses saved)" required>';
+        echo '<input type="text" name="caddr" size="55%" placeholder="Address to send from (because you have two addresses saved)" required><br>';
       }
       else {
-        echo '<input type="hidden" name="caddr">';
+        echo '<input type="hidden" name="caddr"><br>';
       }
        ?>
-      <input type="submit" value="Pay">
+       <input type="submit" value="Pay">
     </form>
     <?php
     if (isset($_GET["send"])) {
@@ -69,8 +69,8 @@ $balance = intval($decbal["result"]["availableBalance"]) / 100;
       $strans = $walletd->sendDelayedTransaction($_GET["send"])->getBody()->getContents();
       $decstrans = json_decode($strans, true);
       echo "Transaction sent to blockchain: <a target='_blank' href='https://turtle-coin.com/?hash=" . $_GET["send"] . "#blockchain_transaction'>Watch status</a>";
-      $transc = count($_SESSION["thistory"]);
-      $_SESSION["thistory"][$transc] = $_GET["send"];
+#      $transc = count($_SESSION["thistory"]);
+#      $_SESSION["thistory"][$transc] = $_GET["send"];
       echo '<script>notify("Your transaction was sent to blockchain", "Transaction completed");</script>';
     }
     elseif (isset($_GET["cancel"])) {

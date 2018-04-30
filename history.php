@@ -20,32 +20,33 @@ $config = [
 
 $walletd = new Walletd\Client($config);
 
+$status = $walletd->getStatus()->getBody()->getContents();
 $uctrans = $walletd->getDelayedTransactionHashes()->getBody()->getContents();
+$addrs = $walletd->getAddresses()->getBody()->getContents();
 
+$decstats = json_decode($status, true);
+$decaddrs = json_decode($addrs, true);
 $decuctrans = json_decode($uctrans, true);
-$uctcount = count($decuctrans["result"]["transactionHashes"]);
 
-$transc = count($_SESSION["thistory"]);
+$addresses = $decaddrs["result"]["addresses"];
+$fcount = count($decaddrs["result"]["addresses"]);
+$uctcount = count($decuctrans["result"]["transactionHashes"]);
+$baddrs = array();
+$bcount = intval($decstats["result"]["knownBlockCount"]);
+$fbi = 1;
  ?>
 <!DOCTYPE html>
 <html>
   <head>
     <meta charset="utf-8">
-    <title>History(session)</title>
+    <title>History</title>
     <link href="https://fonts.googleapis.com/css?family=Oswald" rel="stylesheet">
     <link rel="stylesheet" href="css/history.css">
   </head>
   <body>
     <a href="index.php"><img height="4%" width="4%" src="img/back.png" alt="Back"></a></p>
     Sent transactions:<br>
-    <?php
-    for ($i=1; $i < $transc; $i++) {
-      echo "<a target='_blank' href='https://turtle-coin.com/?hash=" .  $_SESSION["thistory"][$i] . "#blockchain_transaction'>" .  $_SESSION["thistory"][$i] . "</a><br>";
-    }
-    if ($transc == 1) {
-      echo "<span>No transactions found!</span>";
-    }
-     ?>
+    <iframe src="listtrans.php" frameborder='0' width="102%"></iframe>
    </p>Transactions you didn't confirm<br>
      <?php
      for ($i=0; $i < $uctcount; $i++) {

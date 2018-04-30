@@ -18,14 +18,7 @@ elseif ($_SERVER["REQUEST_METHOD"] == "POST") {
   <head>
     <meta charset="utf-8">
     <title>Login</title>
-    <style media="screen">
-      body {
-        background-color: #5dcc63;
-      }
-      #loginform {
-        text-align: center;
-      }
-    </style>
+    <link rel="stylesheet" href="css/login.css">
   </head>
   <body>
     <form id="loginform" action="login.php" method="post">

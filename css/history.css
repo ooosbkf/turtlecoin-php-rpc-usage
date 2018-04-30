@@ -2,6 +2,7 @@ body {
   background-color: #5dcc63;
   color: #fff;
   font-family: 'Oswald', sans-serif;
+  overflow-x: hidden;
 }
 span {
   color: red;
