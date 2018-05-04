@@ -53,7 +53,17 @@ $walletd = new Walletd\Client($config);
         echo '<br><img style="background-color: #fff" src="'.(new QRCode)->render($naddr).'" />';
       }
       elseif ($_POST["method"] == "del") {
-          echo '<script>var confirm = prompt("Please type DELETE to delete ' . substr($_POST["addr"], 0, -35) . '...",""); if (confirm != "DELETE") {alert("Action cancelled");} else {window.location = "maintain.php?c=true&addr=' . $_POST["addr"] . '";}</script>';
+        $bal = $walletd->getBalance($_POST["addr"])->getBody()->getContents();
+
+        $decbal = json_decode($bal, true);
+
+        $balance = intval($decbal["result"]["availableBalance"]) / 100;
+        if ($balance != 0) {
+          echo '<script>var confirm = prompt("Please type DELETE to delete ' . substr($_POST["addr"], 0, -45) . '... with an balance of ' . $balance . ' TRTL",""); if (confirm != "DELETE") {alert("Action cancelled");} else {window.location = "maintain.php?c=true&addr=' . $_POST["addr"] . '";}</script>';
+        }
+        else {
+          echo '<script>var confirm = prompt("Please type DELETE to delete ' . substr($_POST["addr"], 0, -45) . '... with a zero TRTL balance",""); if (confirm != "DELETE") {alert("Action cancelled");} else {window.location = "maintain.php?c=true&addr=' . $_POST["addr"] . '";}</script>';
+        }
     }
   }
   elseif (isset($_GET["c"])) {

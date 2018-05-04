@@ -45,6 +45,10 @@ $lbalance = intval($decbal["result"]["lockedAmount"]) / 100;
 #Stats
 $sblocks = $decstats["result"]["blockCount"];
 $bcount = $decstats["result"]["knownBlockCount"];
+
+#Market value
+$usd = 'https://tradesatoshi.com/api/public/getmarkethistory?market=TRTL_USDT&count=1';
+$response = json_decode(file_get_contents($usd, false), true);
 ?>
 <!DOCTYPE html>
 <html>
@@ -57,8 +61,8 @@ $bcount = $decstats["result"]["knownBlockCount"];
   <body>
     <!-- Output stats and balance -->
     <div id="stats">
-    Your available balance is: <?php echo $balance . " TRTL"; ?> <br>
-    Your locked balance is: <?php echo $lbalance . " TRTL"; ?><br>
+    Your available balance is: <?php echo $balance . " TRTL" . " (" . $balance * $response["result"][0]["price"] . " $)"; ?> <br>
+    Your locked balance is: <?php echo $lbalance . " TRTL" . " (" . $lbalance * $response["result"][0]["price"] . " $)"; ?><br>
     Daemon status: <?php echo $sblocks . " of " . $bcount . " blocks synced"; ?></p>
     </div>
     <!-- Links to the sites -->

@@ -43,9 +43,27 @@ $fbi = 1;
     }
     $ltrans = $walletd->getTransactions($bcount, $fbi, null, $baddrs)->getBody()->getContents();
     $decltrans = json_decode($ltrans, true);
+//    print_r($decltrans["result"]["items"]);
     $pcount = count($decltrans["result"]["items"]);
+    $cadd = count($baddrs);
     for ($i=0; $i < $pcount; $i++) {
-      echo "<a target='_blank' href='https://turtle-coin.com/?hash=" . $decltrans["result"]["items"][$i]["transactions"][0]["transactionHash"] . "#blockchain_transaction'>" . $decltrans["result"]["items"][$i]["transactions"][0]["transactionHash"] . "</a><br>";
+      $tcount = count($decltrans["result"]["items"][$i]["transactions"][0]["transfers"]);
+      for ($j=0; $j < $tcount; $j++) {
+        for ($k=0; $k < $cadd; $k++) {
+          if ($baddrs[$k] == $decltrans["result"]["items"][$i]["transactions"][0]["transfers"][$j]["address"]) {
+            if ($decltrans["result"]["items"][$i]["transactions"][0]["transfers"][$j]["amount"] < 0) {
+              echo "Outgoing: " . "<a target='_blank' href='https://turtle-coin.com/?hash=" . $decltrans["result"]["items"][$i]["transactions"][0]["transactionHash"] . "#blockchain_transaction'>" . $decltrans["result"]["items"][$i]["transactions"][0]["transactionHash"] . "</a><br>";
+            }
+            else {
+              echo "Incoming: " . "<a target='_blank' href='https://turtle-coin.com/?hash=" . $decltrans["result"]["items"][$i]["transactions"][0]["transactionHash"] . "#blockchain_transaction'>" . $decltrans["result"]["items"][$i]["transactions"][0]["transactionHash"] . "</a><br>";
+            }
+          }
+        }
+      }
+      //echo "<a target='_blank' href='https://turtle-coin.com/?hash=" . $decltrans["result"]["items"][$i]["transactions"][0]["transfers"] . "#blockchain_transaction'>" . $decltrans["result"]["items"][$i]["transactions"][0]["transactionHash"] . "</a><br>";
+    }
+    if ($pcount == 0) {
+      echo "No transactions found";
     }
      ?>
   </body>
